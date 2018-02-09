@@ -7,14 +7,14 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.charlie.common.CommonConf.*;
+
 /**
  * Created by chenc49 on 2018/2/8.
  * Function:
  */
 public class AgentImp{
-    private static final String propertyPath = "/tmp/vm_attach_class_property" ;
-    private static final String splitPrefix = ":";
-    private static final int MAX_CLASS_SIZE = 1024 * 1024 * 10;
+
     public static void premain(String target){
 
     }
@@ -61,11 +61,14 @@ public class AgentImp{
      */
     private static List<TargetClassProperty> getTargetClasses(){
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(propertyPath));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(AGENTPARAMFILE));
             String line = null ;
             ArrayList<TargetClassProperty> targetClassProperties = new ArrayList<TargetClassProperty>(16);
             while ((line = bufferedReader.readLine())!= null){
-                String[] split = line.split(splitPrefix);
+                if (line.trim().equals("")) {
+                    continue;
+                }
+                String[] split = line.split(SPLIT_PREFIX);
                 TargetClassProperty targetClassProperty = new TargetClassProperty(split[0], split[1], split[2]);
                 targetClassProperties.add(targetClassProperty);
             }
@@ -103,7 +106,7 @@ public class AgentImp{
     private static byte[] loadNewClassBytes(String path){
         try {
             FileInputStream fileInputStream = new FileInputStream(path);
-            byte[] bytes = new byte[MAX_CLASS_SIZE];//10M
+            byte[] bytes = new byte[MAXBUFFERSIZE];
             int length = fileInputStream.read(bytes);
             byte[] buffer = new byte[length];
             System.arraycopy(bytes,0,buffer,0,length);
