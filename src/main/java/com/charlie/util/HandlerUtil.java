@@ -1,5 +1,6 @@
 package com.charlie.util;
 
+import com.charlie.common.SystemProperty;
 import com.charlie.server.message.AgentParameter;
 
 import java.io.*;
@@ -74,7 +75,7 @@ public class HandlerUtil {
         String agentParam = "";
         for (String className : classNames) {
             byte[] bytes = targetClasses.get(className);
-            String filePath  = CLASSFILEPATH + "/" + className;
+            String filePath  = CLASSFILEPATH + SystemProperty.FILE_SEPARATOR + className;
             boolean b = writeClass(bytes, filePath);
             if (b) {
                 agentParam = agentParam + className + SPLIT_PREFIX + filePath + SPLIT_PREFIX + vmId + "\n";
