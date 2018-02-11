@@ -35,7 +35,7 @@ public class RefectUtil {
         Class[] classByInstance = getClassByInstance(param);
         Method exeableMethod = getExeableMethod(clazz, methodName, classByInstance);
         try {
-            Object invoke = exeableMethod.invoke(null, methodName, param);
+            Object invoke = exeableMethod.invoke(null, param);
             return  invoke ;
         } catch (IllegalAccessException e) {
             e.printStackTrace();

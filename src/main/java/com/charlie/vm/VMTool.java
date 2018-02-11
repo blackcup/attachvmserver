@@ -4,6 +4,8 @@ import com.charlie.common.SystemProperty;
 import com.charlie.util.RefectUtil;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -59,10 +61,20 @@ public class VMTool {
         try {
             String toolsPath = SystemProperty.TOOLS_PATH;
             URL url = new File(toolsPath).toURI().toURL();
-            RefectUtil.invokeVirtualMethod(ClassLoader.getSystemClassLoader(),"addURL",url);
+            //RefectUtil.invokeVirtualMethod(ClassLoader.getSystemClassLoader(),"addURL",url);
+            Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+            add.setAccessible(true);
+            URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+            add.invoke(classloader, new Object[] { url });
             Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
             return  vm ;
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
 
@@ -71,6 +83,10 @@ public class VMTool {
     }
     private static String getVMId(String vmId){
         return vmId;
+    }
+
+    public static void main(String[] args) {
+        getTargetVM("13168");
     }
 
 }

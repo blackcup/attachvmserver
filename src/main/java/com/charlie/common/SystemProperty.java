@@ -43,4 +43,8 @@ public class SystemProperty{
         }
         return null;
     }
+
+    public static void main(String[] args) {
+
+    }
 }
