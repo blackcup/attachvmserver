@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: com.charlie.server.AttachServer
+Agent-Class: com.charlie.agent.AgentImp
+Can-Redefine-Classes: true
+

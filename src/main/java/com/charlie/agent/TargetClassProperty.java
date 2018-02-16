@@ -1,7 +1,7 @@
 package com.charlie.agent;
 
 /**
- * Created by chenc49 on 2018/2/8.
+ * Created by charlie on 2018/2/8.
  * Function:
  */
 public class TargetClassProperty {
@@ -17,6 +17,15 @@ public class TargetClassProperty {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    @Override
+    public String toString() {
+        return "TargetClassProperty{" +
+                "className='" + className + '\'' +
+                ", bytesPath='" + bytesPath + '\'' +
+                ", vmId='" + vmId + '\'' +
+                '}';
     }
 
     public TargetClassProperty(String className, String bytesPath, String vmId) {

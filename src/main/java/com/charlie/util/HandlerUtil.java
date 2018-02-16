@@ -11,7 +11,7 @@ import java.util.Set;
 import static com.charlie.common.CommonConf.*;
 
 /**
- * Created by chenc49 on 2018/2/9.
+ * Created by charlie on 2018/2/9.
  * Function:
  */
 
@@ -36,6 +36,12 @@ public class HandlerUtil {
             return buffer;
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null ;
     }

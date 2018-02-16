@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Created by chenc49 on 2018/2/10.
+ * Created by charlie on 2018/2/10.
  * Function:
  */
 public class RefectUtil {
@@ -59,7 +59,7 @@ public class RefectUtil {
     public static Method getExeableMethod(Object instance,String methodName,Class[] paramTypes){
         return getExeableMethod(instance.getClass(),methodName,paramTypes);
     }
-    public static Method getExeableMethod(Class<?> clazz,String methodName,Class[] paramTypes){
+    public static Method getExeableMethod(Class<?> clazz,String methodName,Class... paramTypes){
         try {
             Method method = clazz.getDeclaredMethod(methodName, paramTypes);
             method.setAccessible(true);

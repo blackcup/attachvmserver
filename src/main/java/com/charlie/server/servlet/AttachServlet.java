@@ -24,7 +24,7 @@ import java.util.List;
 import static com.charlie.common.CommonConf.*;
 
 /**
- * Created by chenc49 on 2018/2/8.
+ * Created by charlie on 2018/2/8.
  * Function:
  */
 public class AttachServlet extends HttpServlet {
@@ -60,6 +60,8 @@ public class AttachServlet extends HttpServlet {
                 AgentParameter parameter = HandlerUtil.matchParameterWithClass(parameterMap,classFiles);
                 HandlerUtil.writeParametrToDisk(parameter);
                 VMTool.applyChange(parameter.getVmId());
+                System.out.println("================================================");
+                System.out.println("================================================");
                 resp.getWriter().print("attach successfully");
             } catch (FileUploadException e) {
                 resp.getWriter().print(e.getMessage());

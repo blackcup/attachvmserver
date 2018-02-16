@@ -1,7 +1,10 @@
 package com.charlie.vm;
 
+import com.charlie.common.CommonConf;
 import com.charlie.common.SystemProperty;
 import com.charlie.util.RefectUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -16,57 +19,72 @@ import java.net.URLClassLoader;
  */
 public class VMTool {
 
+    public static final Logger logger = LoggerFactory.getLogger(CommonConf.class);
     public static void applyChange(String vmId){
         Object vm = getTargetVM(vmId);
+        logger.info("has get attach on {},VM instance is {}",vmId,vm);
         attachAgent(vm);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        detachAgent(vm);
+       // detachAgent(vm);
     }
 
     private static void detachAgent(Object vm) {
-        RefectUtil.invokeVirtualMethod(vm,"detach",null);
+        Class<?> vmClass = null;
+        try {
+            vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+            Method loadAgent = RefectUtil.getExeableMethod(vmClass, "detach");
+            loadAgent.invoke(vm);
+            logger.info("has detach vm:{}",vm);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private static void attachAgent(Object vm) {
-        String agentPath = locateAget();
-        RefectUtil.invokeVirtualMethod(vm,"loadAgent",agentPath);
+        String agentPath = locateAgent();
+        logger.info("agentPath:{}",agentPath);
+        try {
+            Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+            Method loadAgent = RefectUtil.getExeableMethod(vmClass, "loadAgent", String.class);
+            loadAgent.invoke(vm,agentPath);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private static String locateAget(){
-        //current jar is agent jar
+    private static String locateAgent(){
+        //current jar is agent jarn
+        File file = new File("");
+        String absolutePath = file.getAbsolutePath();
+        logger.info("getAbsolutePath:{}",absolutePath);
         String property = System.getProperty("java.class.path");
-        return property;
+        return absolutePath + SystemProperty.FILE_SEPARATOR + property;
     }
 
-    static class MyClassLoader extends URLClassLoader {
-
-        public MyClassLoader(URL[] urls) {
-            super(urls);
-        }
-
-        public MyClassLoader(URL[] urls, ClassLoader parent) {
-            super(urls, parent);
-        }
-
-        public void addJar(URL url) {
-            this.addURL(url);
-        }
-
-    }
     private static Object getTargetVM(String vmId) {
         try {
             String toolsPath = SystemProperty.TOOLS_PATH;
             URL url = new File(toolsPath).toURI().toURL();
-            //RefectUtil.invokeVirtualMethod(ClassLoader.getSystemClassLoader(),"addURL",url);
             Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
             add.setAccessible(true);
             URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
             add.invoke(classloader, new Object[] { url });
             Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
+            logger.info("vm is {}" ,vm.getClass());
             return  vm ;
         } catch (MalformedURLException e) {
             e.printStackTrace();

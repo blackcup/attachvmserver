@@ -3,7 +3,7 @@ package com.charlie.common;
 import java.io.File;
 
 /**
- * Created by chenc49 on 2018/2/9.
+ * Created by charlie on 2018/2/9.
  * Function:
  */
 public class SystemProperty{

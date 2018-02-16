@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by chenc49 on 2018/2/9.
+ * Created by charlie on 2018/2/9.
  * Function:
  */
 public class AgentParameter {

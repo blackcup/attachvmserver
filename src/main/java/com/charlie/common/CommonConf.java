@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by chenc49 on 2018/2/9.
+ * Created by charlie on 2018/2/9.
  * Function:
  */
 public  final  class CommonConf {
