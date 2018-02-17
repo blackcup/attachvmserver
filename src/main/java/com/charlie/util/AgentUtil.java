@@ -15,7 +15,7 @@ import static com.charlie.common.CommonConf.*;
  * Function:
  */
 
-public class HandlerUtil {
+public class AgentUtil {
     static {
         File file = new File(AGENTPARAMFILE);
         if (!file.exists()) {

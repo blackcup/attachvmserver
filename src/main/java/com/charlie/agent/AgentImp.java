@@ -29,21 +29,22 @@ public class AgentImp{
         //target classes to need to change
         List<TargetClassProperty> targetClasses = getTargetClasses();
         //check vm has already loaded this class
-        checkLoaded(targetClasses);
        Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
+        checkLoaded(targetClasses);
         //get class bytes from  TargetClassProperty List ,it contains where the new class bytes is,see@bytesPath
        ClassDefinition[] classDefinitions = loadNewBytesForTargetClass(targetClasses,allLoadedClasses);
         try {
             //redefine the target class
             instrumentation.redefineClasses(classDefinitions);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            logger.error("failed to load agent :{}",e.getMessage());
         }
     }
 
 
-    private static void checkLoaded(List<TargetClassProperty> targetClasses ){}
+    private static void checkLoaded(List<TargetClassProperty> targetClasses ){
+
+    }
 
     /***
      * className:bytesPath:vmId
@@ -131,7 +132,7 @@ public class AgentImp{
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error("can not lose the file:{}",path,e);
                 }
             }
         }

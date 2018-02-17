@@ -14,59 +14,39 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 /**
- * Created by chenc49 on 2018/2/8.
+ * Created by charlie on 2018/2/8.
  * Function:
  */
 public class VMTool {
 
     public static final Logger logger = LoggerFactory.getLogger(CommonConf.class);
-    public static void applyChange(String vmId){
+    public static void applyChange(String vmId) throws Exception {
         Object vm = getTargetVM(vmId);
         logger.info("has get attach on {},VM instance is {}",vmId,vm);
         attachAgent(vm);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-       // detachAgent(vm);
+        logger.info("has loaded the agent jar");
+        Thread.sleep(1000);
+        detachAgent(vm);
+        logger.info("has detach the vm:{}",vm);
     }
 
-    private static void detachAgent(Object vm) {
+    private static void detachAgent(Object vm) throws Exception {
         Class<?> vmClass = null;
-        try {
-            vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
-            Method loadAgent = RefectUtil.getExeableMethod(vmClass, "detach");
-            loadAgent.invoke(vm);
-            logger.info("has detach vm:{}",vm);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
+        vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+        Method loadAgent = RefectUtil.getExeableMethod(vmClass, "detach");
+        loadAgent.invoke(vm);
+        logger.info("has detach vm:{}",vm);
     }
 
-    private static void attachAgent(Object vm) {
-        String agentPath = locateAgent();
+    private static void attachAgent(Object vm) throws Exception {
+        String agentPath = locateAgentJar();
         logger.info("agentPath:{}",agentPath);
-        try {
-            Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
-            Method loadAgent = RefectUtil.getExeableMethod(vmClass, "loadAgent", String.class);
-            loadAgent.invoke(vm,agentPath);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
+        Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
+        Method loadAgent = RefectUtil.getExeableMethod(vmClass, "loadAgent", String.class);
+        loadAgent.invoke(vm,agentPath);
     }
 
-    private static String locateAgent(){
+    private static String locateAgentJar(){
         //current jar is agent jarn
         File file = new File("");
         String absolutePath = file.getAbsolutePath();
@@ -75,36 +55,19 @@ public class VMTool {
         return absolutePath + SystemProperty.FILE_SEPARATOR + property;
     }
 
-    private static Object getTargetVM(String vmId) {
-        try {
-            String toolsPath = SystemProperty.TOOLS_PATH;
-            URL url = new File(toolsPath).toURI().toURL();
-            Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
-            add.setAccessible(true);
-            URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-            add.invoke(classloader, new Object[] { url });
-            Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
-            logger.info("vm is {}" ,vm.getClass());
-            return  vm ;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-
-        return null;
+    private static Object getTargetVM(String vmId) throws Exception {
+        String toolsPath = SystemProperty.TOOLS_PATH;
+        URL url = new File(toolsPath).toURI().toURL();
+        Method add = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+        add.setAccessible(true);
+        URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+        add.invoke(classloader, new Object[] { url });
+        Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
+        logger.info("vm is {}" ,vm.getClass());
+        return  vm ;
     }
     private static String getVMId(String vmId){
         return vmId;
-    }
-
-    public static void main(String[] args) {
-        getTargetVM("13168");
     }
 
 }

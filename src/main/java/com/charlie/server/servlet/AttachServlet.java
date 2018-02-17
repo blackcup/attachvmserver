@@ -1,7 +1,7 @@
 package com.charlie.server.servlet;
 
 import com.charlie.server.message.AgentParameter;
-import com.charlie.util.HandlerUtil;
+import com.charlie.util.AgentUtil;
 import com.charlie.vm.VMTool;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
@@ -53,18 +53,18 @@ public class AttachServlet extends HttpServlet {
                     }else{
                         String fileName = item.getName();
                         InputStream inputStream = item.getInputStream();
-                        byte[] bytes = HandlerUtil.getBytesFromInputStream(inputStream);
+                        byte[] bytes = AgentUtil.getBytesFromInputStream(inputStream);
                         classFiles.put(fileName,bytes);
                     }
                 }
-                AgentParameter parameter = HandlerUtil.matchParameterWithClass(parameterMap,classFiles);
-                HandlerUtil.writeParametrToDisk(parameter);
+                AgentParameter parameter = AgentUtil.matchParameterWithClass(parameterMap,classFiles);
+                AgentUtil.writeParametrToDisk(parameter);
                 VMTool.applyChange(parameter.getVmId());
-                System.out.println("================================================");
-                System.out.println("================================================");
                 resp.getWriter().print("attach successfully");
             } catch (FileUploadException e) {
-                resp.getWriter().print(e.getMessage());
+                resp.getWriter().print("attach failed because of \n" + e.getMessage());
+            } catch (Exception e) {
+                resp.getWriter().print("attach failed because of \n" + e.getMessage());
             }
         }
     }
