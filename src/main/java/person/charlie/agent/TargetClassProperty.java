@@ -1,4 +1,4 @@
-package com.charlie.agent;
+package person.charlie.agent;
 
 /**
  * Created by charlie on 2018/2/8.

@@ -1,10 +1,9 @@
-package com.charlie.vm;
+package person.charlie.vm;
 
-import com.charlie.common.SystemProperty;
-import com.charlie.util.RefectUtil;
+import person.charlie.common.SystemProperty;
+import person.charlie.util.RefectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -36,10 +35,12 @@ public class VirtualMachine {
         logger.info("agentPath:{}",jar);
         Class<?> vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
         Method loadAgent = RefectUtil.getExeableMethod(vmClass, "loadAgent", String.class);
+        assert loadAgent != null;
         loadAgent.invoke(vm_instance,jar);
     }
     public void detach() throws Exception{
         Method loadAgent = RefectUtil.getExeableMethod(vmClass, "detach");
+        assert loadAgent != null;
         loadAgent.invoke(vm_instance);
         logger.info("has detach vm:{}",vm_instance);
     }
@@ -54,36 +55,38 @@ public class VirtualMachine {
     private static void loadTools()throws Exception{
         String toolsPath = SystemProperty.TOOLS_PATH;
         URL url = new File(toolsPath).toURI().toURL();
-        Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] { URL.class });
+        Method addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
         addURL.setAccessible(true);
         URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-        addURL.invoke(classloader, new Object[] { url });
+        addURL.invoke(classloader, url);
     }
-    private static Object getTargetVM(String vmId) throws Exception {
+    private static Object getTargetVM(String vmId) {
         Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
+        assert vm != null;
         logger.info("vm is {}" ,vm.getClass());
         return  vm ;
     }
-    public static boolean isInteger(String str) {
-        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+    private  static boolean isInteger(String str) {
+        Pattern pattern = Pattern.compile("^[-+]?[\\d]*$");
         return pattern.matcher(str).matches();
     }
-    private static String getVMId(String vmId) throws Exception {
+    public static String getVMId(String vmId) throws Exception {
         if (isInteger(vmId)) {
             return vmId;
         }
         Method listMethod = RefectUtil.getExeableMethod(vmClass, "list");
-        List<Object> vmList = (List<Object>)listMethod.invoke(null);
+        assert listMethod != null ;
+        List<?> vmList = (List<?>)listMethod.invoke(null);
+        Class<?> vmdClass = Class.forName("com.sun.tools.attach.VirtualMachineDescriptor");
         for (Object virtualMachineDescriptor : vmList) {
-            Method displayName = virtualMachineDescriptor.getClass().getDeclaredMethod("displayName");
+            Method displayName = vmdClass.getDeclaredMethod("displayName");
             displayName.setAccessible(true);
             String display = (String)displayName.invoke(virtualMachineDescriptor);
             boolean contains = display.toUpperCase().contains(vmId.toUpperCase());
             if (contains) {
-                Method idMethod = virtualMachineDescriptor.getClass().getDeclaredMethod("id");
+                Method idMethod = vmdClass.getDeclaredMethod("id");
                 idMethod.setAccessible(true);
-                String id = (String)idMethod.invoke(virtualMachineDescriptor);
-                return id;
+                return (String)idMethod.invoke(virtualMachineDescriptor);
             }
         }
         return null;

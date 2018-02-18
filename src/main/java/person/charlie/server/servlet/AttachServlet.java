@@ -1,8 +1,8 @@
-package com.charlie.server.servlet;
+package person.charlie.server.servlet;
 
-import com.charlie.server.message.AgentParameter;
-import com.charlie.util.AgentUtil;
-import com.charlie.vm.VMTool;
+import person.charlie.server.message.AgentParameter;
+import person.charlie.util.AgentUtil;
+import person.charlie.vm.VMTool;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
 import org.apache.commons.fileupload.FileUploadException;
@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.charlie.common.CommonConf.*;
+import static person.charlie.common.CommonConf.*;
 
 /**
  * Created by charlie on 2018/2/8.
@@ -62,9 +62,11 @@ public class AttachServlet extends HttpServlet {
                 VMTool.applyChange(parameter.getVmId());
                 resp.getWriter().print("attach successfully");
             } catch (FileUploadException e) {
-                resp.getWriter().print("attach failed because of \n" + e.getMessage());
+                e.printStackTrace();
+                resp.getWriter().print("attach failed because of \n" + e);
             } catch (Exception e) {
-                resp.getWriter().print("attach failed because of \n" + e.getMessage());
+                e.printStackTrace();
+                resp.getWriter().print("attach failed because of \n" + e);
             }
         }
     }

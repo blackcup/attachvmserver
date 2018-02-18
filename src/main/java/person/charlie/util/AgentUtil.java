@@ -1,14 +1,13 @@
-package com.charlie.util;
+package person.charlie.util;
 
-import com.charlie.common.SystemProperty;
-import com.charlie.server.message.AgentParameter;
+import person.charlie.common.SystemProperty;
+import person.charlie.server.message.AgentParameter;
+import person.charlie.common.CommonConf;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static com.charlie.common.CommonConf.*;
 
 /**
  * Created by charlie on 2018/2/9.
@@ -17,7 +16,7 @@ import static com.charlie.common.CommonConf.*;
 
 public class AgentUtil {
     static {
-        File file = new File(AGENTPARAMFILE);
+        File file = new File(CommonConf.AGENTPARAMFILE);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -29,7 +28,7 @@ public class AgentUtil {
     }
     public static byte[] getBytesFromInputStream(InputStream inputStream){
         try {
-            byte[] bytes = new byte[MAXBUFFERSIZE];
+            byte[] bytes = new byte[CommonConf.MAXBUFFERSIZE];
             int length = inputStream.read(bytes);
             byte[] buffer = new byte[length];
             System.arraycopy(bytes,0,buffer,0,length);
@@ -37,11 +36,11 @@ public class AgentUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                inputStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
         return null ;
     }
@@ -49,9 +48,9 @@ public class AgentUtil {
 
     public static AgentParameter matchParameterWithClass(HashMap<String, String> parameterMap,
                                                          HashMap<String, byte[]> classFiles) {
-        String vmId = parameterMap.get(VMID_PARAM).trim();
-        String classList = parameterMap.get(CLASSNAMES_PARAM);
-        String[] split = classList.split(SPLIT_PREFIX);
+        String vmId = parameterMap.get(CommonConf.VMID_PARAM).trim();
+        String classList = parameterMap.get(CommonConf.CLASSNAMES_PARAM);
+        String[] split = classList.split(CommonConf.SPLIT_PREFIX);
         if(split == null || split.length == 0){
             return null ;
         }
@@ -81,16 +80,16 @@ public class AgentUtil {
         String agentParam = "";
         for (String className : classNames) {
             byte[] bytes = targetClasses.get(className);
-            String filePath  = CLASSFILEPATH + SystemProperty.FILE_SEPARATOR + className;
+            String filePath  = CommonConf.CLASSFILEPATH + SystemProperty.FILE_SEPARATOR + className;
             boolean b = writeClass(bytes, filePath);
             if (b) {
-                agentParam = agentParam + className + SPLIT_PREFIX + filePath + SPLIT_PREFIX + vmId + "\n";
+                agentParam = agentParam + className + CommonConf.SPLIT_PREFIX + filePath + CommonConf.SPLIT_PREFIX + vmId + "\n";
             }
         }
         FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream(AGENTPARAMFILE);
-            fileOutputStream.write(agentParam.getBytes(ENCODING));
+            fileOutputStream = new FileOutputStream(CommonConf.AGENTPARAMFILE);
+            fileOutputStream.write(agentParam.getBytes(CommonConf.ENCODING));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

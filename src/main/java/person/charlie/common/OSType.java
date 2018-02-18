@@ -1,4 +1,4 @@
-package com.charlie.common;
+package person.charlie.common;
 
 /**
  * Created by charlie on 2018/2/10.

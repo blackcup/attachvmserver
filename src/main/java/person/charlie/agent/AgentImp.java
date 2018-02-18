@@ -1,16 +1,13 @@
-package com.charlie.agent;
+package person.charlie.agent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import person.charlie.common.CommonConf;
 
 import java.io.*;
 import java.lang.instrument.*;
-import java.lang.reflect.Method;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.charlie.common.CommonConf.*;
 
 /**
  * Created by charlie on 2018/2/8.
@@ -53,14 +50,14 @@ public class AgentImp{
     private static List<TargetClassProperty> getTargetClasses(){
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(AGENTPARAMFILE));
+            bufferedReader = new BufferedReader(new FileReader(CommonConf.AGENTPARAMFILE));
             String line;
             ArrayList<TargetClassProperty> targetClassProperties = new ArrayList<TargetClassProperty>(16);
             while ((line = bufferedReader.readLine())!= null){
                 if (line.trim().equals("")) {
                     continue;
                 }
-                String[] split = line.split(SPLIT_PREFIX);
+                String[] split = line.split(CommonConf.SPLIT_PREFIX);
                 TargetClassProperty targetClassProperty = new TargetClassProperty(split[0], split[1], split[2]);
                 targetClassProperties.add(targetClassProperty);
             }
@@ -117,7 +114,7 @@ public class AgentImp{
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(path);
-            byte[] bytes = new byte[MAXBUFFERSIZE];
+            byte[] bytes = new byte[CommonConf.MAXBUFFERSIZE];
             int length = fileInputStream.read(bytes);
             byte[] buffer = new byte[length];
             System.arraycopy(bytes,0,buffer,0,length);

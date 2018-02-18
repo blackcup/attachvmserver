@@ -1,4 +1,4 @@
-package com.charlie.server.message;
+package person.charlie.server.message;
 
 import java.util.HashMap;
 import java.util.Map;

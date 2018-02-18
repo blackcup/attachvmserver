@@ -1,6 +1,6 @@
-package com.charlie.server;
+package person.charlie.server;
 
-import com.charlie.server.servlet.AttachServlet;
+import person.charlie.server.servlet.AttachServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;

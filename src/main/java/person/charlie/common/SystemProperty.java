@@ -1,4 +1,4 @@
-package com.charlie.common;
+package person.charlie.common;
 
 import java.io.File;
 

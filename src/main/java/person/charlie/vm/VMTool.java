@@ -1,15 +1,11 @@
-package com.charlie.vm;
+package person.charlie.vm;
 
-import com.charlie.common.CommonConf;
-import com.charlie.common.SystemProperty;
-import com.charlie.util.RefectUtil;
+import person.charlie.common.CommonConf;
+import person.charlie.common.SystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
  * Created by charlie on 2018/2/8.
@@ -17,7 +13,7 @@ import java.net.URLClassLoader;
  */
 public class VMTool {
 
-    public static final Logger logger = LoggerFactory.getLogger(CommonConf.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommonConf.class);
     public static void applyChange(String vmId) throws Exception {
         VirtualMachine vm_instance = VirtualMachine.attach(vmId);
         logger.info("has get attach on {},VM instance is {}",vmId,vm_instance);
@@ -29,7 +25,7 @@ public class VMTool {
         logger.info("has detach the vm:{}",vm_instance);
     }
     private static String locateAgentJar(){
-        //current jar is agent jarn
+        //current jar is agent jar
         File file = new File("");
         String absolutePath = file.getAbsolutePath();
         logger.info("getAbsolutePath:{}",absolutePath);
