@@ -24,11 +24,11 @@ public class AgentImp{
     public static final Logger logger = LoggerFactory.getLogger(AgentImp.class);
     public static void agentmain(String target,Instrumentation instrumentation){
         //target classes to need to change
-        List<TargetClassProperty> targetClasses = getTargetClasses();
+        List<TargetClass> targetClasses = getTargetClasses();
         //check vm has already loaded this class
        Class[] allLoadedClasses = instrumentation.getAllLoadedClasses();
         checkLoaded(targetClasses);
-        //get class bytes from  TargetClassProperty List ,it contains where the new class bytes is,see@bytesPath
+        //get class bytes from  TargetClass List ,it contains where the new class bytes is,see@bytesPath
        ClassDefinition[] classDefinitions = loadNewBytesForTargetClass(targetClasses,allLoadedClasses);
         try {
             //redefine the target class
@@ -39,7 +39,7 @@ public class AgentImp{
     }
 
 
-    private static void checkLoaded(List<TargetClassProperty> targetClasses ){
+    private static void checkLoaded(List<TargetClass> targetClasses ){
 
     }
 
@@ -47,19 +47,19 @@ public class AgentImp{
      * className:bytesPath:vmId
      * @return
      */
-    private static List<TargetClassProperty> getTargetClasses(){
+    private static List<TargetClass> getTargetClasses(){
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(CommonConf.AGENTPARAMFILE));
             String line;
-            ArrayList<TargetClassProperty> targetClassProperties = new ArrayList<TargetClassProperty>(16);
+            ArrayList<TargetClass> targetClassProperties = new ArrayList<TargetClass>(16);
             while ((line = bufferedReader.readLine())!= null){
                 if (line.trim().equals("")) {
                     continue;
                 }
                 String[] split = line.split(CommonConf.SPLIT_PREFIX);
-                TargetClassProperty targetClassProperty = new TargetClassProperty(split[0], split[1], split[2]);
-                targetClassProperties.add(targetClassProperty);
+                TargetClass targetClass = new TargetClass(split[0], split[1], split[2]);
+                targetClassProperties.add(targetClass);
             }
 
             return targetClassProperties.size()!=0 ? targetClassProperties : null;
@@ -78,14 +78,14 @@ public class AgentImp{
         }
         return null;
     }
-    private static ClassDefinition[] loadNewBytesForTargetClass(List<TargetClassProperty> targetClassNames,Class[] allLoadedClasses){
+    private static ClassDefinition[] loadNewBytesForTargetClass(List<TargetClass> targetClassNames, Class[] allLoadedClasses){
         if(targetClassNames == null || targetClassNames.size() == 0){
             return null ;
         }
         ArrayList<ClassDefinition> list = new ArrayList<ClassDefinition>(16);
         for (Class clazz : allLoadedClasses) {
             String name = clazz.getName();
-            for (TargetClassProperty targetClass : targetClassNames) {
+            for (TargetClass targetClass : targetClassNames) {
                 String className = targetClass.getClassName();
                 if(name.equals(className)){
                     byte[] bytes = loadNewClassBytes(targetClass.getBytesPath());

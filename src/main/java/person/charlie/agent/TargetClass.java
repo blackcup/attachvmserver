@@ -4,7 +4,7 @@ package person.charlie.agent;
  * Created by charlie on 2018/2/8.
  * Function:
  */
-public class TargetClassProperty {
+public class TargetClass {
     private String className;
     private String bytesPath;
 
@@ -12,7 +12,7 @@ public class TargetClassProperty {
         return className;
     }
 
-    public TargetClassProperty() {
+    public TargetClass() {
     }
 
     public void setClassName(String className) {
@@ -21,14 +21,14 @@ public class TargetClassProperty {
 
     @Override
     public String toString() {
-        return "TargetClassProperty{" +
+        return "TargetClass{" +
                 "className='" + className + '\'' +
                 ", bytesPath='" + bytesPath + '\'' +
                 ", vmId='" + vmId + '\'' +
                 '}';
     }
 
-    public TargetClassProperty(String className, String bytesPath, String vmId) {
+    public TargetClass(String className, String bytesPath, String vmId) {
         this.className = className;
         this.bytesPath = bytesPath;
         this.vmId = vmId;

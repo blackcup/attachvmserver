@@ -26,6 +26,5 @@ public class AttachServer {
             logger.info(e.getMessage());
             System.exit(1);
         }
-
     }
 }
