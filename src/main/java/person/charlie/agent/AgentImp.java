@@ -129,7 +129,7 @@ public class AgentImp{
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    logger.error("can not lose the file:{}",path,e);
+                    logger.error("can not locate the file:{}",path,e);
                 }
             }
         }
