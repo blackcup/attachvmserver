@@ -20,31 +20,18 @@ public class AgentUtil {
         if (!file.exists()) {
             try {
                 file.createNewFile();
-
             } catch (IOException e) {
-                e.printStackTrace();
+                System.exit(0);
             }
         }
     }
-    public static byte[] getBytesFromInputStream(InputStream inputStream){
-        try {
-            byte[] bytes = new byte[CommonConf.MAXBUFFERSIZE];
-            int length = inputStream.read(bytes);
-            byte[] buffer = new byte[length];
-            System.arraycopy(bytes,0,buffer,0,length);
-            return buffer;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-//            try {
-//                inputStream.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-        }
-        return null ;
+    public static byte[] getBytesFromInputStream(InputStream inputStream) throws IOException {
+        byte[] bytes = new byte[CommonConf.MAXBUFFERSIZE];
+        int length = inputStream.read(bytes);
+        byte[] buffer = new byte[length];
+        System.arraycopy(bytes,0,buffer,0,length);
+        return buffer;
     }
-
 
     public static AgentParameter matchParameterWithClass(HashMap<String, String> parameterMap,
                                                          HashMap<String, byte[]> classFiles) {
@@ -72,7 +59,7 @@ public class AgentUtil {
         return classFullName.substring(classFullName.lastIndexOf(".") + 1);
     }
 
-    public static void writeParametrToDisk(AgentParameter parameter) {
+    public static void writeParametrToDisk(AgentParameter parameter) throws Exception {
         String vmId = parameter.getVmId();
 
         Map<String, byte[]> targetClasses = parameter.getTargetClasses();
@@ -88,21 +75,16 @@ public class AgentUtil {
         }
         FileOutputStream fileOutputStream = null;
         try {
+
             fileOutputStream = new FileOutputStream(CommonConf.AGENTPARAMFILE);
             fileOutputStream.write(agentParam.getBytes(CommonConf.ENCODING));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }finally {
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            if(fileOutputStream!=null){
+                fileOutputStream.close();
             }
         }
+
+
     }
     public static boolean writeClass(byte[] bytes, String filePath){
         File file = new File(filePath);
@@ -110,7 +92,6 @@ public class AgentUtil {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
                 return  false ;
             }
         }
@@ -119,10 +100,8 @@ public class AgentUtil {
             fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(bytes);
             return true ;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }finally {
             if (fileOutputStream != null) {
                 try {
@@ -132,6 +111,5 @@ public class AgentUtil {
                 }
             }
         }
-        return false;
     }
 }
