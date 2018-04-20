@@ -20,6 +20,7 @@ public  final  class CommonConf {
     public static final String ENCODING = "UTF-8" ;
     public static final String CLASSFILEPATH;
     public static final String AGENTPARAMFILE ;
+    public static final String AGENTLOGPATH = "/tmp/charlie.error.log";
     static {
         switch (SystemProperty.OS_TYPE){
             case WINDOWS:{REPOSITORY = "C:\\tmp";CLASSFILEPATH = "C:\\tmp";AGENTPARAMFILE = "C:\\tmp\\vm_attach_class_param";break;}

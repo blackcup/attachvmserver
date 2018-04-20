@@ -3,6 +3,7 @@ package person.charlie.agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import person.charlie.common.CommonConf;
+import person.charlie.util.CommonUtil;
 
 import java.io.*;
 import java.lang.instrument.*;
@@ -21,6 +22,17 @@ public class AgentImp{
      * @param target className
      * @param instrumentation
      */
+
+    private static PrintWriter printWriter;
+
+    static {
+        try {
+            printWriter = new PrintWriter(new FileOutputStream(CommonConf.AGENTLOGPATH));
+        } catch (FileNotFoundException e) {
+
+        }
+    }
+
     public static final Logger logger = LoggerFactory.getLogger(AgentImp.class);
     public static void agentmain(String target,Instrumentation instrumentation){
         //target classes to need to change
@@ -34,7 +46,7 @@ public class AgentImp{
             //redefine the target class
             instrumentation.redefineClasses(classDefinitions);
         } catch (Exception e) {
-            logger.error("failed to load agent :{}",e.getMessage());
+            printWriter.write(CommonUtil.getErroResponse(e));
         }
     }
 

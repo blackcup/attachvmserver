@@ -2,6 +2,7 @@ package person.charlie.server.servlet;
 
 import person.charlie.server.message.AgentParameter;
 import person.charlie.util.AgentUtil;
+import person.charlie.util.CommonUtil;
 import person.charlie.vm.VMTool;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUpload;
@@ -62,7 +63,7 @@ public class AttachServlet extends HttpServlet {
                 VMTool.applyChange(parameter.getVmId());
                 resp.getWriter().print("attach successfully");
             } catch (Exception e) {
-                resp.getWriter().print(getErroResponse(e));
+                resp.getWriter().print(CommonUtil.getErroResponse(e));
             }
         }
     }
@@ -72,21 +73,5 @@ public class AttachServlet extends HttpServlet {
         resp.getWriter().print("Please use post way!");
     }
 
-    String getErroResponse(Exception e){
-        StackTraceElement[] stackTrace = e.getStackTrace();
-        StringBuilder stringBuilder = new StringBuilder("attach failed because of :");
-        stringBuilder.append(e.toString());
-        stringBuilder.append("stackTrace:\n");
-        String stackString = getStackString(stackTrace);
-        stringBuilder.append(stackString);
-        return stringBuilder.toString();
-    }
-    String getStackString(StackTraceElement[] stackTrace){
-        StringBuilder stringBuilder = new StringBuilder("");
-        for (StackTraceElement stackTraceElement : stackTrace) {
-            stringBuilder.append(stackTraceElement.toString());
-            stringBuilder.append("\n");
-        }
-        return stringBuilder.toString();
-    }
+
 }
