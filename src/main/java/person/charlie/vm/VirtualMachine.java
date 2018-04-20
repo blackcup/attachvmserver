@@ -52,6 +52,11 @@ public class VirtualMachine {
         loadTools();
         vmClass = Class.forName("com.sun.tools.attach.VirtualMachine");
     }
+
+    /***
+     * load tools.jar by reflect
+     * @throws Exception
+     */
     private static void loadTools()throws Exception{
         String toolsPath = SystemProperty.TOOLS_PATH;
         URL url = new File(toolsPath).toURI().toURL();

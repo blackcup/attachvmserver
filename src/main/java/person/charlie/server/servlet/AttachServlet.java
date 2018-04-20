@@ -61,12 +61,8 @@ public class AttachServlet extends HttpServlet {
                 AgentUtil.writeParametrToDisk(parameter);
                 VMTool.applyChange(parameter.getVmId());
                 resp.getWriter().print("attach successfully");
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-                resp.getWriter().print("attach failed because of \n" + e);
             } catch (Exception e) {
-                e.printStackTrace();
-                resp.getWriter().print("attach failed because of \n" + e);
+                resp.getWriter().print(getErroResponse(e));
             }
         }
     }
@@ -74,5 +70,23 @@ public class AttachServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.getWriter().print("Please use post way!");
+    }
+
+    String getErroResponse(Exception e){
+        StackTraceElement[] stackTrace = e.getStackTrace();
+        StringBuilder stringBuilder = new StringBuilder("attach failed because of :");
+        stringBuilder.append(e.toString());
+        stringBuilder.append("stackTrace:\n");
+        String stackString = getStackString(stackTrace);
+        stringBuilder.append(stackString);
+        return stringBuilder.toString();
+    }
+    String getStackString(StackTraceElement[] stackTrace){
+        StringBuilder stringBuilder = new StringBuilder("");
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            stringBuilder.append(stackTraceElement.toString());
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
     }
 }
