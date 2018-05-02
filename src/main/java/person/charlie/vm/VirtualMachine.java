@@ -65,6 +65,7 @@ public class VirtualMachine {
         URLClassLoader classloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
         addURL.invoke(classloader, url);
     }
+
     private static Object getTargetVM(String vmId) {
         Object vm = RefectUtil.invokeStaticMethod("com.sun.tools.attach.VirtualMachine","attach", vmId);
         assert vm != null;

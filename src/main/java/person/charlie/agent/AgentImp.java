@@ -32,8 +32,6 @@ public class AgentImp{
 
         }
     }
-
-    public static final Logger logger = LoggerFactory.getLogger(AgentImp.class);
     public static void agentmain(String target,Instrumentation instrumentation){
         //target classes to need to change
         List<TargetClass> targetClasses = getTargetClasses();
@@ -49,8 +47,6 @@ public class AgentImp{
             printWriter.write(CommonUtil.getErroResponse(e));
         }
     }
-
-
     private static void checkLoaded(List<TargetClass> targetClasses ){
 
     }
@@ -75,16 +71,14 @@ public class AgentImp{
             }
 
             return targetClassProperties.size()!=0 ? targetClassProperties : null;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            printWriter.write(CommonUtil.getErroResponse(e));
         }finally {
             if (bufferedReader!=null){
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    printWriter.write(CommonUtil.getErroResponse(e));
                 }
             }
         }
@@ -130,18 +124,15 @@ public class AgentImp{
             int length = fileInputStream.read(bytes);
             byte[] buffer = new byte[length];
             System.arraycopy(bytes,0,buffer,0,length);
-
             return buffer;
-        } catch (FileNotFoundException e) {
-            logger.info("path={}",path,e);
-        } catch (IOException e) {
-            logger.info("path={}",path,e);
+        } catch (Exception e) {
+            printWriter.write(CommonUtil.getErroResponse(e));
         }finally {
             if(fileInputStream!=null){
                 try {
                     fileInputStream.close();
                 } catch (IOException e) {
-                    logger.error("can not locate the file:{}",path,e);
+                    printWriter.write(CommonUtil.getErroResponse(e));
                 }
             }
         }

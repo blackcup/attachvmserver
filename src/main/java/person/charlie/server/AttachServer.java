@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import person.charlie.common.StartConfiguration;
 import person.charlie.server.servlet.AttachServlet;
 
+import java.util.Arrays;
+
 /**
  * Created by charlie on 2018/2/8.
  * Function:
@@ -22,6 +24,7 @@ public class AttachServer {
         }else{
             loadConfiguration(args,startConfiguration);
         }
+        System.out.println(startConfiguration.getPort());
         Server server = new Server(startConfiguration.getPort());
         ServletContextHandler contextHandler = new ServletContextHandler();
         server.setHandler(contextHandler);

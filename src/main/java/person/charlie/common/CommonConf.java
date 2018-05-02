@@ -28,31 +28,6 @@ public  final  class CommonConf {
             case OTHER:
             default:{REPOSITORY = "/tmp";CLASSFILEPATH = "/tmp";AGENTPARAMFILE = "/tmp/vm_attach_class_param";break;}
         }
-        createFile();
         logger.info("CLASSFILEPATH = {},AGENTPARAMFILE = {}",CLASSFILEPATH,AGENTPARAMFILE);
-    }
-    public static void createFile(){
-        File repos = new File(REPOSITORY);
-        if(!repos.exists()){
-            repos.mkdir();
-        }
-        File classFilePath = new File(CLASSFILEPATH);
-        if(!classFilePath.exists()){
-            classFilePath.mkdir();
-            logger.info("{} is created",CLASSFILEPATH);
-        }
-        File agentParamFile = new File(AGENTPARAMFILE);
-        if(!agentParamFile.exists()){
-            try {
-                agentParamFile.createNewFile();
-            } catch (IOException e) {
-                logger.info("{} failed to create",AGENTPARAMFILE);
-                System.exit(1);
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        System.out.println();
     }
 }

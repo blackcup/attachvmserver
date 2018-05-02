@@ -29,9 +29,45 @@ import static person.charlie.common.CommonConf.*;
  * Function:
  */
 public class AttachServlet extends HttpServlet {
+    private static boolean initFailed = false;
+    private static Throwable throwable = null;
+
 
     @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            createFile();
+        } catch (Exception e) {
+            throwable = e;
+            initFailed = true;
+        }
+    }
+
+    public static void createFile() throws Exception{
+        File repos = new File(REPOSITORY);
+        if(!repos.exists()){
+            repos.mkdir();
+        }
+        File classFilePath = new File(CLASSFILEPATH);
+        if(!classFilePath.exists()){
+            classFilePath.mkdir();
+            logger.info("{} is created",CLASSFILEPATH);
+        }
+        File agentParamFile = new File(AGENTPARAMFILE);
+        if(!agentParamFile.exists()){
+            agentParamFile.createNewFile();
+        }
+        File errorFile = new File(AGENTLOGPATH);
+        if (!errorFile.exists()) {
+            errorFile.createNewFile();
+        }
+    }
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (initFailed) {
+            resp.getWriter().write(CommonUtil.getErroResponse(throwable));
+        }
         RequestContext requestContext = new ServletRequestContext(req);
         if (FileUpload.isMultipartContent(requestContext )) {
             DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -61,13 +97,16 @@ public class AttachServlet extends HttpServlet {
                 AgentParameter parameter = AgentUtil.matchParameterWithClass(parameterMap,classFiles);
                 AgentUtil.writeParametrToDisk(parameter);
                 VMTool.applyChange(parameter.getVmId());
-                resp.getWriter().print("attach successfully");
+                String res = "attach successfully" + "\n" + "attach log is :\n" + CommonUtil.getAttachErrorMessage();
+                resp.getWriter().print(res);
             } catch (Exception e) {
-                resp.getWriter().print(CommonUtil.getErroResponse(e));
+                String res = "attach failed" + "\n" + "attach log is \n=========================\n" + CommonUtil.getAttachErrorMessage() + "\n";
+                res = res + "===============================\n" ;
+                res= res + "program log is :\n==========================\n" + CommonUtil.getErroResponse(e);
+                resp.getWriter().print(res);
             }
         }
     }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.getWriter().print("Please use post way!");
